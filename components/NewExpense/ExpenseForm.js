@@ -34,21 +34,17 @@ const ExpenseForm = () =>{
         //   enteredDate:event.target.value,  
         // })
     }
-    const inputChangeHandler = (identifier, value) => {
-        if(identifier === "title") {
-            setEnteredTitle(value)
-        }else if(identifier==="date") {
-            setEnteredDate(value)
-        }else {
-            setEnteredAmaunt(value)
-        }
+
+    const submitHandler =(event) =>{
+        event.preventDefault()
     }
+
 return (
-    <form>
+    <form onSubmit={submitHandler}>
         <div className="new-expense__controls">
             <div className="new-expense__control">
                 <label>Title</label>
-                <input type="text" onInput={(event)=>{inputChangeHandler("title", event.target.value)}}/>
+                <input type="text" onInput={titleChangeHandler}/>
             </div>
             <div className="new-expense__control">
                 <label>Amount</label>
