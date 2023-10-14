@@ -2,43 +2,53 @@ import React, {useState} from "react";
 import "./ExpenseForm.css";
 
 const ExpenseForm = () =>{
-    // const [enteredTitle, setEnteredTitle] = useState("")
-    // const [eneredAmaunt, setEnteredAmaunt] = useState("")
-    // const [enteredDate, setEnteredDate] = useState("")
-const [userInput, setUserInput] = useState({
-    enteredTitle: "",
-    enteredAmaunt: "",
-    enteredDate: ""
-})
+     const [enteredTitle, setEnteredTitle] = useState("")
+     const [eneredAmaunt, setEnteredAmaunt] = useState("")
+     const [enteredDate, setEnteredDate] = useState("")
+// const [userInput, setUserInput] = useState({
+//     enteredTitle: "",
+//     enteredAmaunt: "",
+//     enteredDate: ""
+// })
     const titleChangeHandler = (event) =>{
+        setEnteredTitle(event.target.value)
         // setUserInput({
         //     ...userInput,
         //   enteredTitle:event.target.value,  
         // })
-        setUserInput((prevState) =>{
-            return {...prevState, enteredTitle: event.target.value}
-        })
+        // setUserInput((prevState) =>{
+        //     return {...prevState, enteredTitle: event.target.value}
+        // })
     }
     const amauntChangeHandler = (event) => {
-        // setEnteredAmaunt(event.target.value)
-        setUserInput({
-            ...userInput,
-          enteredAmaunt:event.target.value,  
-        })
+         setEnteredAmaunt(event.target.value)
+        // setUserInput({
+        //     ...userInput,
+        //   enteredAmaunt:event.target.value,  
+        // })
     }
     const dateChangeHandler = (event)=>{
-        // setEnteredDate(event.target.value)
-        setUserInput({
-            ...userInput,
-          enteredDate:event.target.value,  
-        })
+         setEnteredDate(event.target.value)
+        // setUserInput({
+        //     ...userInput,
+        //   enteredDate:event.target.value,  
+        // })
+    }
+    const inputChangeHandler = (identifier, value) => {
+        if(identifier === "title") {
+            setEnteredTitle(value)
+        }else if(identifier==="date") {
+            setEnteredDate(value)
+        }else {
+            setEnteredAmaunt(value)
+        }
     }
 return (
     <form>
         <div className="new-expense__controls">
             <div className="new-expense__control">
                 <label>Title</label>
-                <input type="text" onInput={titleChangeHandler}/>
+                <input type="text" onInput={(event)=>{inputChangeHandler("title", event.target.value)}}/>
             </div>
             <div className="new-expense__control">
                 <label>Amount</label>
