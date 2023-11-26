@@ -1,16 +1,26 @@
-import { useState } from "react";
-import NewProject from "./components/NewProject";
-import NoProjectSelected from "./components/NoProjectSelected";
-import ProjectsSidebar from "./components/ProjectsSidebar";
+import { useState } from 'react';
+
+import NewProject from './components/NewProject.jsx';
+import NoProjectSelected from './components/NoProjectSelected.jsx';
+import ProjectsSidebar from './components/ProjectsSidebar.jsx';
 
 function App() {
-  const [projectState, setProjectState] = useState({
+  const [projectsState, setProjectsState] = useState({
     selectedProjectId: undefined,
-    projects: []
-  })
+    projects: [],
+  });
+
+  function handleStartAddProject() {
+    setProjectsState((prevState) => {
+      return {
+        ...prevState,
+        selectedProjectId: null,
+      };
+    });
+  }
 
   function handleAddProject(projectData) {
-    setProjectState((prevState) => {
+    setProjectsState((prevState) => {
       const projectId = Math.random();
       const newProject = {
         ...projectData,
@@ -25,28 +35,21 @@ function App() {
     });
   }
 
-  function handleAddProject(){
-    setProjectState(prevState =>{
-      return {
-        ...prevState,
-        projects:[...prevState.projects]
-      }
-    })
-  }
-
   let content;
 
-  if(projectState.selectedProjectId === null){
-    content = <NewProject onAdd={handleAddProject}></NewProject>
-  }else if (projectState.selectedProjectId ===undefined){
-    content = <NoProjectSelected onStartAddProject={handlerStartAddProject}/>
+  if (projectsState.selectedProjectId === null) {
+    content = <NewProject onAdd={handleAddProject} />;
+  } else if (projectsState.selectedProjectId === undefined) {
+    content = <NoProjectSelected onStartAddProject={handleStartAddProject} />;
   }
 
   return (
-    <main className="h-screen my-8 flex gap-8" >
-      <ProjectsSidebar onStartAddProject={handlerStartAddProject}/>
+    <main className="h-screen my-8 flex gap-8">
+      <ProjectsSidebar
+        onStartAddProject={handleStartAddProject}
+        projects={projectsState.projects}
+      />
       {content}
-      
     </main>
   );
 }
