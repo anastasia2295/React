@@ -6,7 +6,7 @@ import { AiFillPlayCircle, AiFillPauseCircle } from "react-icons/ai";
 import { BiSkipNext, BiSkipPrevious } from "react-icons/bi";
 import { IconContext } from "react-icons";
 import "../components/PlayList.css"
-
+import imageMusic from "../assets/images.jpg"
 
 export default function Player() {
   const [isPlaying, setIsPlaying] = useState(false);
@@ -57,6 +57,7 @@ export default function Player() {
     } else {
       play();
       setIsPlaying(true);
+      
     }
   };
 
@@ -64,12 +65,10 @@ export default function Player() {
     
     <div className="component">
         
-      <h2>Playing Now</h2>
-      
-      <img className="musicCover" src="C:/Users/nasta/OneDrive/Рабочий стол/ProjecMus/src/assets/image.jpg" />
+      <img className="musicCover" src={imageMusic} />
       <div>
-        <h3 className="title">Rubaiyyan</h3>
-        <p className="subTitle">Qala</p>
+        <h2 className="title">title</h2>
+        <p className="subTitle">autor</p>
       </div>
       <div>
         <div className="time">
@@ -95,11 +94,11 @@ export default function Player() {
         />
       </div>
       <div>
-        <button className="playButton">
+        {/* <button className="playButton">
           <IconContext.Provider value={{ size: "3em", color: "#fff8f8" }}>
             <BiSkipPrevious />
           </IconContext.Provider>
-        </button>
+        </button> */}
         {!isPlaying ? (
           <button className="playButton" onClick={playingButton}>
             <IconContext.Provider value={{ size: "3em", color: "#fff8f8" }}>
@@ -113,11 +112,11 @@ export default function Player() {
             </IconContext.Provider>
           </button>
         )}
-        <button className="playButton">
+        {/* <button className="playButton">
           <IconContext.Provider value={{ size: "3em", color: "#fff8f8" }}>
             <BiSkipNext />
           </IconContext.Provider>
-        </button>
+        </button> */}
       </div>
     </div>
   );
