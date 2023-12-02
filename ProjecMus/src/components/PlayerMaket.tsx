@@ -1,9 +1,10 @@
 import {  useState } from "react";
 import "./PlayList.css"
-import { AiFillPlayCircle, AiFillPauseCircle } from "react-icons/ai";
-import { IconContext } from "react-icons";
 import "../components/PlayList.css"
 import imageMusic from "../assets/images.jpg"
+import { HiStatusOnline } from "react-icons/hi";
+import { HiPlay } from "react-icons/hi";
+import { HiPause } from "react-icons/hi";
 
 
 export default function PlayerMaket () {
@@ -35,19 +36,17 @@ export default function PlayerMaket () {
               </p>
             </div>
           </div>
-          <div>
+          
+          <div >
           {!isPlaying ? (
-          <button className="playButton" onClick={playingButton}>
-            <IconContext.Provider value={{ size: "3em" }}>
-              <AiFillPlayCircle />
-            </IconContext.Provider>
-          </button>
+            <HiPlay size={40} onClick={playingButton}/>
         ) : (
-          <button className="playButton" onClick={playingButton}>
-            <IconContext.Provider value={{ size: "3em"}}>
-              <AiFillPauseCircle />
-            </IconContext.Provider>
-          </button>
+            <div className="play">
+              <div className="play1">
+          <HiStatusOnline size={40}/>
+               </div>
+            <HiPause size={40} onClick={playingButton}/>
+            </div>
         )}
         
         </div>
