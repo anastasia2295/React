@@ -1,8 +1,10 @@
-
+body{
+  font-family: sans-serif;
+}
   .component {
     display: flex;
     background-color: rgb(16, 12, 12);
-    width: 95%;
+    width: 70%;
     color: #fff8f8;
     max-width: 1000px;
     margin: 1em auto;
@@ -14,7 +16,7 @@
   .component:hover{
     display: flex;
     background-color: rgb(16,12,12);
-    width: 97%;
+    width: 72%;
     color: #9c088e;
     max-width: 1000px;
     margin: 1em auto;
@@ -32,17 +34,8 @@
     box-shadow: 0 0 2px 2px #9c088e;
    
   }
-  
-  /* .playButton {
-    background: none;
-    border: none;
-    width: 5rem;
-    height: 5rem;
-    align-items: center;
-    justify-content: center;
-    padding-top: 1rem;
-    color: #fff8f8  ;
-  } */
+ 
+ 
 .play{
   display: flex;
 }
@@ -54,13 +47,13 @@
     margin-top: -1em;
   }
   
-  .time {
+  /* .time {
     margin: 0 auto;
     width: 80%;
     display: flex;
     justify-content: space-between;
     font-size: smaller;
-  }
+  } */
   
   .timeline {
     width: 80%;
