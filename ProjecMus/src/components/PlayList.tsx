@@ -1,123 +1,67 @@
-import { useEffect, useState } from "react";
-import useSound from "use-sound";
-import qala from "../assets/Lesa FS - Между нами.mp3";
+import "./PlayList.css"
+import {useState} from "react"
+import "./PlayList.css"
+import { musicList } from '../assets/musicList';
+import { CiPlay1 } from "react-icons/ci";
+import { CiPause1 } from "react-icons/ci";
+import { CiStreamOn } from "react-icons/ci";
 
-import { AiFillPlayCircle, AiFillPauseCircle } from "react-icons/ai";
-import { BiSkipNext, BiSkipPrevious } from "react-icons/bi";
-import { IconContext } from "react-icons";
-import "../components/PlayList.css"
-import imageMusic from "../assets/images.jpg"
 
-export default function Player() {
-  const [isPlaying, setIsPlaying] = useState(false);
-  const [time, setTime] = useState({
-    min: "",
-    sec: ""
-  });
-  const [currTime, setCurrTime] = useState({
-    min: "",
-    sec: ""
-  });
-
-  const [seconds, setSeconds] = useState();
-
-  const [play, { pause, duration, sound }] = useSound(qala);
-
-  useEffect(() => {
-    if (duration) {
-      const sec = duration / 1000;
-      const min = Math.floor(sec / 60);
-      const secRemain = Math.floor(sec % 60);
-      setTime({
-        min: min,
-        sec: secRemain
-      });
+function PlayList () {
+ const [isPlaying, setIsPlaying] = useState(false)
+ const [activeItem, setActiveItem] = useState(null)
+   
+  const   handlePausa  = () => {
+        if (isPlaying) {
+          setIsPlaying(false);
+        } else {
+          setIsPlaying(true);
+        }
+      };
+    const handleClick = (index) => {
+     setActiveItem({ activeItem: index, isPlaying: true });
+    };
+       return (
+        
+         <ul className="list">
+             {musicList.map((item, index) => (
+                 <li className=
+                 {activeItem === index ? 'active' : 'component'}
+                 key={index}
+    >
+                 <div className="component_id">
+                    <h3>{item.id}</h3>
+                 </div>
+                 <div className="component_image">
+                    <img className="musicCover" src={item.image} />
+                 </div>
+                 <div className="component_title">
+                    <p className="title">{item.title} </p>
+                    <p> - </p>
+                    <p className="subTitle">{item.artist}</p>
+               
+                  </div>
+        
+                  <div className="component_time">
+                    <p> {item. time} </p>
+                  </div>
+                 <div className="button">
+                      {activeItem === index && isPlaying===true ? (
+                         <div className="play">
+                            <div className="play1">
+                                <CiStreamOn size={35}/>
+                           </div>
+                       <CiPause1 size={35} onClick={() => handlePausa(index)}/>
+                         </div>
+                  ) : (
+             <CiPlay1  size={35} onClick={() => handleClick(index)}/>
+         )}
+                   </div>
+        
+    </li>
+    ))}
+    </ul>
+    );
     }
-  }, [isPlaying]);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      if (sound) {
-        setSeconds(sound.seek([]));
-        const min = Math.floor(sound.seek([]) / 60);
-        const sec = Math.floor(sound.seek([]) % 60);
-        setCurrTime({
-          min,
-          sec
-        });
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [sound]);
-
-  const playingButton = () => {
-    if (isPlaying) {
-      pause();
-      setIsPlaying(false);
-    } else {
-      play();
-      setIsPlaying(true);
-      
-    }
-  };
-
-  return (
     
-    <div className="component">
-        
-      <img className="musicCover" src={imageMusic} />
-      <div>
-        <h2 className="title">title</h2>
-        <p className="subTitle">autor</p>
-      </div>
-      <div>
-        <div className="time">
-          <p>
-            {currTime.min}:{currTime.sec}
-          </p>
-          <p>
-            {time.min}:{time.sec}
-          </p>
-         
-        </div>
-        
-        <input
-          type="range"
-          min="0"
-          max={duration / 1000}
-          default="0"
-          value={seconds}
-          className="timeline"
-          onChange={(e) => {
-            sound.seek([e.target.value]);
-          }}
-        />
-      </div>
-      <div>
-        {/* <button className="playButton">
-          <IconContext.Provider value={{ size: "3em", color: "#fff8f8" }}>
-            <BiSkipPrevious />
-          </IconContext.Provider>
-        </button> */}
-        {!isPlaying ? (
-          <button className="playButton" onClick={playingButton}>
-            <IconContext.Provider value={{ size: "3em", color: "#fff8f8" }}>
-              <AiFillPlayCircle />
-            </IconContext.Provider>
-          </button>
-        ) : (
-          <button className="playButton" onClick={playingButton}>
-            <IconContext.Provider value={{ size: "3em", color: "#fff8f8" }}>
-              <AiFillPauseCircle />
-            </IconContext.Provider>
-          </button>
-        )}
-        {/* <button className="playButton">
-          <IconContext.Provider value={{ size: "3em", color: "#fff8f8" }}>
-            <BiSkipNext />
-          </IconContext.Provider>
-        </button> */}
-      </div>
-    </div>
-  );
-}
+    export default PlayList;
