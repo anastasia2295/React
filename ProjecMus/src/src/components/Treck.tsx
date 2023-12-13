@@ -1,13 +1,9 @@
-import { useState } from "react";
+import React from "react";
+import { styled }  from "styled-components"
 import Pausa from "../home/assets/Pausa.svg"
 import Play from "../home/assets/Play.svg"
 import Playing from "../home/assets/Playing.svg"
-import Image1 from "../home/assets/1.jpg"
-import Image2 from  "../home/assets/2.jpg"
-import Image3 from  "../home/assets/3.jpg"
-import "./PlayList.css"
-import React from "react";
-import { styled }  from "styled-components"
+
 
 const Li = styled.li`
 display: flex;   
@@ -51,65 +47,25 @@ display: flex;
 const ButtonPausa = styled.div`
 padding-right: 2rem;
 `
-const  musicList = [
-    {
-      id: 1,
-      image: Image1,
-      title: "Easy on Me",
-      artist:
-        'Адель',
-        time: 250
-    },
-    {
-      id:2,
-      image: Image2,
-      title: 'Heat Waves',
-      artist:
-        'Glass Animals',
-      time: 210
-    },
-    {
-      id:3,
-      image: Image3,
-      title: 'Break My',
-      artist:
-        'Бейонсе',
-      time: 260
-    },]
 
-    export default function PlayList () {
-        const [isPlaying, setIsPlaying] = useState(false)
-        const[activeItem, setActiveItem] = useState(null)
-        const handlePlay=(index) =>{
-            setActiveItem(index),
-            setIsPlaying(true)
-        };
-        const handlePausa = () => {
-            if(isPlaying) {
-                setIsPlaying(false)
-            } else {
-                setIsPlaying(true)
-            }
-        }
-          
 
-        return(
-            musicList.map((item, index)=>(
-              <ul >
+ export default function Treck ({index, image, id, time,title, artist,  }) {
+    return(
+        <ul >
                 <Li $invalid = {activeItem === index}
                 >
                   <div >
-                        <h3>{item.id}</h3>
+                        <h3>{id}</h3>
                     </div>
                     
                     <Image>
-                        <img  src={item.image} />
+                        <img  src={image} />
                     </Image>
                     <Title >
-                        <p>{item.title + " - " + item.artist}</p>
+                        <p>{title + " - " + artist}</p>
                     </Title>
                     <div >
-                        {Math.floor(item.time / 60) + ':' + item.time % 60}
+                        {Math.floor(time / 60) + ':' + time % 60}
                     </div>
                     <div>
                         {activeItem === index && isPlaying ? (
@@ -130,6 +86,5 @@ const  musicList = [
                     </div>
                 </Li>
                 </ul>
-            ))
-        )
-    }
+    )
+ }
