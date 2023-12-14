@@ -3,7 +3,7 @@ import { styled }  from "styled-components"
 import Pausa from "../home/assets/Pausa.svg"
 import Play from "../home/assets/Play.svg"
 import Playing from "../home/assets/Playing.svg"
-
+import { useState } from "react";
 
 const Li = styled.li`
 display: flex;   
@@ -20,6 +20,7 @@ box-shadow:${({$invalid})=> $invalid ? `0 0 5px 2px #E283D2` : `none`}  ;
     
    
 `
+
 const Button = styled.button`
 background-color: #e03e2500; 
     border: none; 
@@ -49,11 +50,12 @@ padding-right: 2rem;
 `
 
 
- export default function Treck ({index, image, id, time,title, artist,  }) {
+ export default function Treck ( {onPausa, id, time,title,artist, image, onPlay, activeItem, isPlaying}) {
+
+    
     return(
-        <ul >
-                <Li $invalid = {activeItem === index}
-                >
+        <Li key={id} 
+        $invalid = {activeItem === id}>
                   <div >
                         <h3>{id}</h3>
                     </div>
@@ -68,23 +70,23 @@ padding-right: 2rem;
                         {Math.floor(time / 60) + ':' + time % 60}
                     </div>
                     <div>
-                        {activeItem === index && isPlaying ? (
+                        {activeItem === id && isPlaying ? (
                             <ButtonPlay>
                                 <ButtonPausa >
                                  <img src={Playing} />
                                 </ButtonPausa>
-                                <Button  onClick={()=> handlePausa()} >
+                                <Button  onClick={()=>onPausa()} >
                              <img src={Pausa} width="22" height="22" />
                           </Button>
                            </ButtonPlay>
                         ) : (
-                          <Button  onClick={()=> handlePlay(index)} >
+                          <Button  onClick={()=>onPlay(id)} >
                              <img src={Play} width="22" height="22" />
                           </Button>
                         )
                          }
                     </div>
                 </Li>
-                </ul>
+            
     )
  }
