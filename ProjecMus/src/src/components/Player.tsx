@@ -1,32 +1,15 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import useSound from "use-sound";
-import qala from "./assets/Lesa FS - Между нами.mp3";
+import gala from "./assets/Lesa FS - Между нами.mp3";
 import { styled }  from "styled-components"
 import "../PlayList/Player.css"
 import React from "react";
-import Pausa from "./assets/Pausa.svg"
+import Pausa from "./assets/Pausa 2.svg"
 import Volume from "./assets/Group (1).svg"
 import Play from "./assets/Play.svg"
-import Playing from "./assets/Playing.svg"
 import imageMusic from "./assets/images.jpg"
 
 
-const  musicList = [
-    {
-      id: 1,
-      image: imageMusic,
-      title: "Easy on Me",
-      artist:
-        'Адель',
-        time: 250
-    },]
-const ButtonPlay = styled.div`
-display: flex;
-
-`
-const ButtonPausa = styled.div`
-padding-right: 2rem;
-`
 
 const Button = styled.button`
 background-color: #e03e2500; 
@@ -34,6 +17,7 @@ background-color: #e03e2500;
     &:hover{
       cursor: pointer;
     }
+    padding-right: 5rem;
     
 `
 const Time = styled.div`
@@ -69,94 +53,122 @@ width: 10%;
     align-items: start ;
    
 `
-const PlayPausa = styled.div`
+const ElementsVolume = styled.div`
 display: flex;
 `
 const ButtonVolume = styled.div`
 padding-right: 2rem;
+color: ${({$invalid})=> $invalid ? `#9c088e` : `#bab6b6`};
+width: 20px;
 `
-export default function Player1() {
-    const [isPlaying, setIsPlaying] = useState(false)
-    const [time, setTime] = useState({
-        min: "",
-        sec: ""
-      });
-      const [currTime, setCurrTime] = useState({
-        min: "",
-        sec: ""
-      });
+const sound = {
+    
+        audio:{gala},
+        image: {imageMusic},
+        title: 'Heat Waves',
+        artist:
+          'Glass Animals',
+        time: 210
       
-    
-    
-    const playingButton = () => {
-        if (isPlaying) {
-          pause();
-          setIsPlaying(false);
+}
+export default function Player1() {
+    //   const [isPlaying, setIsPlaying] = useState(false)
+     const [time, setTime] = useState({
+         min: "",
+         sec: ""
+       });
+       const [currTime, setCurrTime] = useState({
+         min: "",
+         sec: ""
+       });
+      
+     const [play, setPlay] = useState(false)
+     const soundRef = useRef<HTMLAudioElement>(null)
+     const MAX = 20
+
+     function handleVolume(e: React.ChangeEvent<HTMLInputElement>): void{
+        const {value} =  e.target;
+        const volume = Number(value) / MAX;
+        soundRef.current!.volume = volume;
+     }
+    function playingButton(): void {
+        if (play) {
+          soundRef.current?.pause()
+          setPlay(false);
         } else {
-          play();
-          setIsPlaying(true);
+          void soundRef.current?.play();
+          setPlay(true);
           
         }
       };
+    
+    //   function  playingButton():void {
+    //     if (play) {
+    //         soundRef.current?.pause()
+    //       setPlay(false)
+    //     } else {
+    //         soundRef.current?.play()
+    //         setPlay(true)
+          
+    //     }
+    //   };
     return (
         
-       <Li $invalid = {isPlaying}
+       <Li $invalid = {play}
        > 
         <Image>
-        <img src={imageMusic} />
+            <img src={imageMusic} />
         </Image>
         <Title>
-          <h2 >Title</h2>
-          <p >autor</p>
+          <h2 >{sound.artist}</h2>
+          <p >{sound.title}</p>
         </Title>
         
         <div>
-                   {isPlaying ?  (
-                              <ButtonPlay>
-                                  <ButtonPausa >
-                                   <img src={Playing} />
-                                  </ButtonPausa>
-                                  <Button onClick={playingButton}  >
-                               <img src={Pausa} width="22" height="22" />
-                            </Button>
-                             </ButtonPlay>
-                          ) : (
-                            <Button   onClick={playingButton} 
-                             >
-                               <img src={Play} width="22" height="22" />
-                            </Button>
-                          )
-                          }
-                      </div>
-                      <PlayPausa>
-                      <div>
-                      <Time >
-                         <p>  0 
-                         </p>
-                         <p> 0
-
-                         </p>
-                      </Time>
+            {play ?  (
+            <Button onClick={()=>playingButton()} >
+                <img src={Pausa} width="40" height="40" />
+                 </Button>
+                 ) : (
+                 <Button   onClick={()=>playingButton()} >
+                    <img src={Play} width="25" height="25" />
+                </Button>
+                )}
+        </div>
+        <ElementsVolume>
+            <div>
+                <Time >
+                    <p>
+                         {currTime.min}:{currTime.sec}
+                    </p>
+                     <p>
+                        {time.min}:{time.sec}
+                    </p>
+                </Time>
+                
         <input
           type="range"
           min="0"
-         />
+          />
         </div>
-        </PlayPausa>
-        <PlayPausa>
-        <ButtonVolume>
-           <img src={Volume}/>
+        </ElementsVolume>
+        <ElementsVolume>
+        <ButtonVolume 
+        >
+           <img src={Volume} width="30" height="20"/>
         </ButtonVolume>
         <div>
            <input
               type="range"
-              min="0"
+              min={0}
+              max={MAX}
+              onChange={(e) => handleVolume(e)}
           />
        </div>
-       </PlayPausa>
-       
-                      </Li>
-    
-                        
-    )
-                    }
+       </ElementsVolume>
+       <div>
+       <audio ref={soundRef} loop src={gala}/>
+       </div>
+ </Li>
+ )
+ }
