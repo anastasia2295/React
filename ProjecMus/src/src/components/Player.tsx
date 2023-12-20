@@ -1,6 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import useSound from "use-sound";
-import gala from "./assets/Lesa FS - Между нами.mp3";
+import gala from "./assets/Melanie Martinez - Cake.mp3";
 import { styled }  from "styled-components"
 import "../PlayList/Player.css"
 import React from "react";
@@ -61,6 +60,7 @@ padding-right: 2rem;
 color: ${({$invalid})=> $invalid ? `#9c088e` : `#bab6b6`};
 width: 20px;
 `
+
 const sound = {
     
         audio:{gala},
@@ -72,89 +72,107 @@ const sound = {
       
 }
 export default function Player1() {
-    //   const [isPlaying, setIsPlaying] = useState(false)
-     const [time, setTime] = useState({
-         min: "",
-         sec: ""
-       });
-       const [currTime, setCurrTime] = useState({
-         min: "",
-         sec: ""
-       });
+    
+    //  const [time, setTime] = useState({
+    //      min: "",
+    //      sec: ""
+    //    });
+    //    const [currTime, setCurrTime] = useState({
+    //      min: "",
+    //      sec: ""
+    //    });
+       
+    // const [currentSong, setCurrentSong] = useState(sound.audio)
       
-     const [play, setPlay] = useState(false)
+     const [state, setPlay] = useState({
+        playing: false,
+        volume:0,
+        loadedSeconds: 1,
+        playedSeconds: 0
+     })
      const soundRef = useRef<HTMLAudioElement>(null)
      const MAX = 20
+     const {
+        playing,
+        volume,
+        loadedSeconds,
+        playedSeconds
+     } = state
 
      function handleVolume(e: React.ChangeEvent<HTMLInputElement>): void{
         const {value} =  e.target;
         const volume = Number(value) / MAX;
         soundRef.current!.volume = volume;
      }
+
+    //  const handleInterval= () =>{
+    //    const duration:number = soundRef.current?.duration;
+    //    const ct:number =  soundRef.current?.currentTime
+    //    console.log(duration, ct)
+    //    setCurrentSong({ ...currentSong, "progress": ct / duration * 100, "length": duration})
+    //  }
+
     function playingButton(): void {
-        if (play) {
-          soundRef.current?.pause()
+        if (state) {
+          soundRef.current?.play()
           setPlay(false);
         } else {
-          void soundRef.current?.play();
+          void soundRef.current?.pause();
           setPlay(true);
-          
         }
       };
     
-    //   function  playingButton():void {
-    //     if (play) {
-    //         soundRef.current?.pause()
-    //       setPlay(false)
-    //     } else {
-    //         soundRef.current?.play()
-    //         setPlay(true)
-          
-    //     }
-    //   };
+     const handleProgress = (e)=>{
+        // setPlay({...state, ...e })
+        console.log(e)
+     }
     return (
         
-       <Li $invalid = {play}
+       <Li $invalid = {!state}
        > 
         <Image>
             <img src={imageMusic} />
         </Image>
         <Title>
-          <h2 >{sound.artist}</h2>
+          <h3 >{sound.artist}</h3>
           <p >{sound.title}</p>
         </Title>
         
         <div>
-            {play ?  (
-            <Button onClick={()=>playingButton()} >
-                <img src={Pausa} width="40" height="40" />
-                 </Button>
-                 ) : (
-                 <Button   onClick={()=>playingButton()} >
+            {state ?  (
+            <Button   onClick={()=>playingButton()} >
                     <img src={Play} width="25" height="25" />
                 </Button>
+                 ) : (
+                    <Button onClick={()=>playingButton()} >
+                    <img src={Pausa} width="40" height="40" />
+                     </Button>
                 )}
         </div>
         <ElementsVolume>
             <div>
                 <Time >
                     <p>
-                         {currTime.min}:{currTime.sec}
+                        0
                     </p>
                      <p>
-                        {time.min}:{time.sec}
+                        0
                     </p>
                 </Time>
                 
         <input
           type="range"
           min="0"
+          step="1"
+          max={loadedSeconds}
+          value={playedSeconds}
+         
+          
           />
         </div>
         </ElementsVolume>
         <ElementsVolume>
-        <ButtonVolume 
-        >
+        <ButtonVolume >
            <img src={Volume} width="30" height="20"/>
         </ButtonVolume>
         <div>
@@ -167,7 +185,7 @@ export default function Player1() {
        </div>
        </ElementsVolume>
        <div>
-       <audio ref={soundRef} loop src={gala}/>
+       <audio ref={soundRef}  loop src={gala} onChange={() => handleProgress} />
        </div>
  </Li>
  )
