@@ -1,4 +1,5 @@
 import { useEffect, useState, useRef } from "react";
+import useSound from "use-sound";
 import gala from "./assets/Melanie Martinez - Cake.mp3";
 import { styled }  from "styled-components"
 import "../PlayList/Player.css"
@@ -24,7 +25,7 @@ display: flex;
 justify-content: space-between;
 `
 
-const Li = styled.li`
+const PlayerComponent = styled.li`
 display: flex;   
 background-color: #1a1918;
 width: 95%;
@@ -52,7 +53,7 @@ width: 10%;
     align-items: start ;
    
 `
-const ElementsVolume = styled.div`
+const FlexBox = styled.div`
 display: flex;
 `
 const ButtonVolume = styled.div`
@@ -60,119 +61,165 @@ padding-right: 2rem;
 color: ${({$invalid})=> $invalid ? `#9c088e` : `#bab6b6`};
 width: 20px;
 `
-
-const sound = {
-    
-        audio:{gala},
-        image: {imageMusic},
-        title: 'Heat Waves',
-        artist:
-          'Glass Animals',
-        time: 210
-      
+interface PlayerDescription {
+  audio: any,
+  image:  string,
+  title: string,
+  time: number ,
+  artist: string 
+  
 }
-export default function Player1() {
-    
-    //  const [time, setTime] = useState({
-    //      min: "",
-    //      sec: ""
-    //    });
-    //    const [currTime, setCurrTime] = useState({
-    //      min: "",
-    //      sec: ""
-    //    });
-       
-    // const [currentSong, setCurrentSong] = useState(sound.audio)
+    interface PlayerProps {
       
-     const [state, setPlay] = useState({
-        playing: false,
-        volume:0,
-        loadedSeconds: 1,
-        playedSeconds: 0
-     })
-     const soundRef = useRef<HTMLAudioElement>(null)
-     const MAX = 20
-     const {
-        playing,
-        volume,
-        loadedSeconds,
-        playedSeconds
-     } = state
+       audio: any;
+       title: string;
+       switchingPlayaButton: ()=> void;
+       time: number ;
+       artist: string ;
+       image:  string;
+      handleVolume: ()=> void ; 
+    
+     } 
 
+const sound:PlayerDescription = {
+    
+        audio: gala,
+        image: imageMusic,
+        title: 'Heat Waves',
+        time: 210,
+        artist: 'Glass Animals'
+}
+ const  Player1: React.FC<PlayerProps> = ()  => {
+    
+     const [time, setTime] = useState({
+         min: "",
+         sec: ""
+       });
+       const [currTime, setCurrTime] = useState({
+         min: "",
+         sec: ""
+       });
+      //  const duration:number = soundRef.current?.duration;
+     const [play, setPlay] = useState(false)
+     const soundRef: React.RefObject<HTMLAudioElement> = useRef<HTMLAudioElement>(null)
+     const MAX = 20
+   
+    //  const onSetVideoTimestamp = (event: React.ChangeEvent<HTMLMediaElement>):void => {
+    //   const {currentTime} = event.target
+    //   const time = Number(currentTime)
+    //   soundRef.current!.currentTime = time;
+    // }
+    const [seconds, setSeconds] = useState();
+    const duration:number = soundRef.current?.duration;
+       const ct:number =  soundRef.current?.currentTime
+
+      //  useEffect(() => {
+      //   if (duration) {
+      //     const sec = duration / 1000;
+      //     const min = Math.floor(sec / 60);
+      //     const secRemain = Math.floor(sec % 60);
+      //     setTime({
+      //       min: min,
+      //       sec: secRemain
+      //     });
+      //   }
+      // }, [play]);
+    
+      useEffect(() => {
+        const interval = setInterval(() => {
+          if (ct) {
+            setSeconds(ct);
+            const min = Math.floor(ct / 60);
+            const sec = Math.floor(ct % 60);
+            setCurrTime({
+              min,
+              sec
+            });
+          }
+        }, 1000);
+        return () => clearInterval(interval);
+      }, [ct]);
+
+  //   function handleProgress(e: React.ChangeEvent<HTMLInputElement>): void{
+      
+       
+  //     const {value} =  e.target;
+  //     const currentTime = Number(value)/ 100 ;
+  //     soundRef.current!.currentTime = currentTime;
+  //     console.log(currentTime)
+  //  }
      function handleVolume(e: React.ChangeEvent<HTMLInputElement>): void{
         const {value} =  e.target;
         const volume = Number(value) / MAX;
         soundRef.current!.volume = volume;
      }
 
-    //  const handleInterval= () =>{
-    //    const duration:number = soundRef.current?.duration;
-    //    const ct:number =  soundRef.current?.currentTime
-    //    console.log(duration, ct)
-    //    setCurrentSong({ ...currentSong, "progress": ct / duration * 100, "length": duration})
-    //  }
-
-    function playingButton(): void {
-        if (state) {
-          soundRef.current?.play()
+    const  switchingPlayaButton= () => {
+        if (play) {
+          soundRef.current?.pause()
           setPlay(false);
         } else {
-          void soundRef.current?.pause();
+          void soundRef.current?.play();
           setPlay(true);
+          
         }
       };
     
-     const handleProgress = (e)=>{
-        // setPlay({...state, ...e })
-        console.log(e)
-     }
     return (
         
-       <Li $invalid = {!state}
+       <PlayerComponent $invalid = {play}
        > 
         <Image>
             <img src={imageMusic} />
         </Image>
         <Title>
-          <h3 >{sound.artist}</h3>
+          <h2 >{sound.artist}</h2>
           <p >{sound.title}</p>
         </Title>
         
         <div>
-            {state ?  (
-            <Button   onClick={()=>playingButton()} >
+            {play ?  (
+            <Button onClick={switchingPlayaButton} >
+                <img src={Pausa} width="40" height="40" />
+                 </Button>
+                 ) : (
+                 <Button   onClick={switchingPlayaButton} >
                     <img src={Play} width="25" height="25" />
                 </Button>
-                 ) : (
-                    <Button onClick={()=>playingButton()} >
-                    <img src={Pausa} width="40" height="40" />
-                     </Button>
                 )}
         </div>
-        <ElementsVolume>
+        <FlexBox>
             <div>
                 <Time >
                     <p>
-                        0
+                         {currTime.min}:{currTime.sec}
                     </p>
                      <p>
-                        0
+                     {Math.floor(sound.time / 60) + ':' + sound.time % 60}
                     </p>
                 </Time>
                 
         <input
-          type="range"
-          min="0"
-          step="1"
-          max={loadedSeconds}
-          value={playedSeconds}
-         
+        type="range"
+        min="0"
+        step={ct}
+        max={ct / 1000}
+        value={seconds}
+        onChange={(e) => {
+          ct[e.target.value];
+        }}
+          // type="range"
+          // min="0"
+          // max="10"
           
+          
+          // onChange={(e) => handleProgress(e)}
           />
         </div>
-        </ElementsVolume>
-        <ElementsVolume>
-        <ButtonVolume >
+        </FlexBox>
+        <FlexBox>
+        <ButtonVolume 
+        >
            <img src={Volume} width="30" height="20"/>
         </ButtonVolume>
         <div>
@@ -183,10 +230,12 @@ export default function Player1() {
               onChange={(e) => handleVolume(e)}
           />
        </div>
-       </ElementsVolume>
+       </FlexBox>
        <div>
-       <audio ref={soundRef}  loop src={gala} onChange={() => handleProgress} />
+       <audio ref={soundRef} loop src={sound.audio}  />
        </div>
- </Li>
+ </PlayerComponent>
  )
  }
+
+ export default Player1

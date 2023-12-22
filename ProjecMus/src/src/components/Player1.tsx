@@ -1,31 +1,15 @@
-import { useEffect, useState } from "react";
-import {useSound}  from "use-sound";
-import qala from "./assets/Lesa FS - Между нами.mp3";
+import { useEffect, useState, useRef } from "react";
+import gala from "./assets/Melanie Martinez - Cake.mp3";
 import { styled }  from "styled-components"
 import "../PlayList/Player.css"
 import React from "react";
-import Pausa from "./assets/Pausa.svg"
+import Pausa from "./assets/Pausa 2.svg"
 import Volume from "./assets/Group (1).svg"
 import Play from "./assets/Play.svg"
-import Playing from "./assets/Playing.svg"
 import imageMusic from "./assets/images.jpg"
+import Progress from "./Progress";
 
-const Li = styled.li`
-display: flex;   
-background-color: #1a1918;
-width: 95%;
-font-weight: bold;
-font-size: 1.1rem ;
-color: ${({$invalid})=> $invalid ? `#9c088e` : `#bab6b6`}; 
-max-width: 59.4rems;
-padding: 0.8rem;
-margin: 1rem auto;
-justify-content: space-around; 
-border:${({$invalid})=> $invalid ? `1px solid #212121` : `1px solid #212121`};
-border-radius: 5px;
-align-items: center ;
-box-shadow:${({$invalid})=> $invalid ? `0 0 5px 2px #E283D2` : `none`}  ;
-`
+
 
 const Button = styled.button`
 background-color: #e03e2500; 
@@ -33,149 +17,183 @@ background-color: #e03e2500;
     &:hover{
       cursor: pointer;
     }
+    padding-right: 5rem;
     
-`
-
-const Title = styled.div`
-display: flex;
-    justify-content: flex-start;
-    width: 50%;
-`
-const Image = styled.div`
-img{
-border-radius: 55%;
-      height: 3.8rem;
-    box-shadow: 0 0 2px 2px #9c088e;
-  }
-`
-const ButtonPlay = styled.div`
-display: flex;
-`
-const ButtonPausa = styled.div`
-padding-right: 2rem;
 `
 const Time = styled.div`
 display: flex;
 justify-content: space-between;
 `
 
-export default function Player() {
+const PlayerComponent = styled.div`
+display: flex;   
+background-color: #1a1918;
+width: 95%;
+font-weight: bold;
+font-size: 1.1rem ;
+color: ${({$invalid})=> $invalid ? `#9c088e` : `#bab6b6`}; 
 
-    const [isPlaying, setIsPlaying] = useState(false);
-    const [time, setTime] = useState({
-      min: "",
-      sec: ""
-    });
-    const [currTime, setCurrTime] = useState({
-      min: "",
-      sec: ""
-    });
-  
-    const [seconds, setSeconds] = useState();
-  
-    const [play, { pause, duration, sound }] = useSound(qala);
-  
-    useEffect(() => {
-      if (duration) {
-        const sec = duration / 1000;
-        const min = Math.floor(sec / 60);
-        const secRemain = Math.floor(sec % 60);
-        setTime({
-          min: min,
-          sec: secRemain
-        });
-      }
-    }, [isPlaying]);
-  
-    useEffect(() => {
-      const interval = setInterval(() => {
-        if (sound) {
-          setSeconds(sound.seek([]));
-          const min = Math.floor(sound.seek([]) / 60);
-          const sec = Math.floor(sound.seek([]) % 60);
-          setCurrTime({
-            min,
-            sec
-          });
-        }
-      }, 1000);
-      return () => clearInterval(interval);
-    }, [sound]);
-  
-    const playingButton = () => {
-      if (isPlaying) {
-        pause();
-        setIsPlaying(false);
-      } else {
-        play();
-        setIsPlaying(true);
-        
-      }
-    };
+margin: 1rem;
+justify-content: space-around; 
+border:${({$invalid})=> $invalid ? `1px solid #212121` : `1px solid #212121`};
+border-radius: 5px;
+align-items: center ;
+box-shadow:${({$invalid})=> $invalid ? `0 0 5px 2px #E283D2` : `none`}  ;
+`
+const Image = styled.div`
+img{
+    margin:1rem;
+border-radius: 55%;
+      height: 5rem;
+    box-shadow: 0 0 2px 2px #9c088e;
+  }
+`
+const Title = styled.div`
+width: 10%;
+    align-items: start ;
+   
+`
+const FlexBlock = styled.div`
+display: flex;
+`
+const ButtonVolume = styled.div`
+padding-right: 2rem;
+color: ${({$invalid})=> $invalid ? `#9c088e` : `#bab6b6`};
+width: 20px;
+`
 
-  return (
+// const sound = {
     
-    <div className="component">
+//         audio:{gala},
+//         image: {imageMusic},
+//         title: 'Heat Waves',
+//         artist:
+//           'Glass Animals',
+//         time: 210
+      
+// }
+export default function Player1() {
+    
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [time, setTime] = useState({
+    min: "",
+    sec: ""
+  });
+  const [currTime, setCurrTime] = useState({
+    min: "",
+    sec: ""
+  });
+
+
+      
+     const [state, setPlay] = useState({
+        playing: false,
+        volume:0,
+        loadedSeconds: 1,
+        playedSeconds: 0
+     })
+     const soundRef = useRef<HTMLAudioElement>(null)
+    
+     const MAX = 20
+     const {
+        playing,
+        volume,
+        loadedSeconds,
+        playedSeconds
+     } = state
+
+     function handleVolume(e: React.ChangeEvent<HTMLInputElement>): void{
+        const {value} =  e.target;
+        const volume = Number(value) / MAX;
+        soundRef.current!.volume = volume;
+     }
+    
+
+    //  const handleInterval= () =>{
+    //    const duration:number = soundRef.current?.duration;
+    //    const ct:number =  soundRef.current?.currentTime
+    //    console.log(duration, ct)
+    //    setCurrentSong({ ...currentSong, "progress": ct / duration * 100, "length": duration})
+    //  }
+    const onSetVideoTimestamp = (event: React.ChangeEvent<HTMLAudioElement>):void => {
+      const timestamp = event.currentTarget.currentTime
+      onSetVideoTimestamp(Math.floor(timestamp))
+    }
+    const  playingButton = () => {
+        if (state) {
+          soundRef.current?.play()
+          setPlay(false);
+        } else {
+          void soundRef.current?.pause();
+          setPlay(true);
+        }
+      };
+    const handleProgress = (e) =>{
+      setPlay({...state, ...e})
+    }
+    //  const handleProgress = (soundRef)=>{
+    //   const duration:number = soundRef.current?.duration;
+    //   const ct:number =  soundRef.current?.currentTime
+    //   const currentProgress = ct / duration * 100 || 0; 
         
-      <img className="musicCover" src={imageMusic} />
-      <div>
-        <h2 className="title">title</h2>
-        <p className="subTitle">autor</p>
-      </div>
-      <div>
-                      {isPlaying ?  (
-                            <ButtonPlay>
-                                <ButtonPausa >
-                                 <img src={Playing} />
-                                </ButtonPausa>
-                                <Button  onClick={()=>playingButton()} >
-                             <img src={Pausa} width="22" height="22" />
-                          </Button>
-                           </ButtonPlay>
-                        ) : (
-                          <Button  onClick={()=>playingButton()}>
-                             <img src={Play} width="22" height="22" />
-                          </Button>
-                        )
-                         }
-                    </div>
-      <div>
-        <Time >
-          <p>
+    //  }
+    return (
+        
+       <PlayerComponent $invalid = {!state}
+       > 
+        <Image>
+            <img src={imageMusic} />
+        </Image>
+        <Title>
+          <h3 >{sound.artist}</h3>
+          <p >{sound.title}</p>
+        </Title>
+        
+        <div>
+            {state ?  (
+            <Button   onClick={()=>playingButton()} >
+                    <img src={Play} width="25" height="25" />
+                </Button>
+                 ) : (
+                    <Button onClick={()=>playingButton()} >
+                    <img src={Pausa} width="40" height="40" />
+                     </Button>
+                )}
+        </div>
+        <FlexBlock>
+            <div>
+                <Time >
+                <p>
             {currTime.min}:{currTime.sec}
           </p>
           <p>
             {time.min}:{time.sec}
           </p>
-         
-        </Time>
-        
-        <input
-          type="range"
-          min="0"
-          max={duration / 1000}
-          default="0"
-          value={seconds}
-          className="timeline"
-          onChange={(e) => {
-            sound.seek([e.target.value]);
-          }}
-        />
-      </div>
-      <div>
-        <img src={Volume}/>
-      </div>
-      <div>
-      <input
-          type="range"
-          min="0"
-          max={duration / 1000}
-          default="0"
-          value={seconds}
-          className="timeline"
-        
-        />
-      </div>
-    </div>
-  );
-}
+                </Time>
+                <input
+              type="range"
+              min={0}
+              max={loadedSeconds}
+              onChange={(e) => handleProgress(e)}
+          />
+        </div>
+        </FlexBlock>
+        <FlexBlock>
+        <ButtonVolume >
+           <img src={Volume} width="30" height="20"/>
+        </ButtonVolume>
+        <div>
+           <input
+              type="range"
+              min={0}
+              max={MAX}
+              onChange={(e) => handleVolume(e)}
+          />
+       </div>
+       </FlexBlock>
+       <div>
+       <audio ref={soundRef}  loop src={gala} onChange={(e) => handleProgress(e)}   onTimeUpdate={onSetVideoTimestamp}/>
+       </div>
+ </PlayerComponent>
+ )
+ }
