@@ -272,51 +272,56 @@ const sound:PlayerDescription = {
   const [play, setPlay] = useState(false)
   const soundRef: React.RefObject<HTMLAudioElement> = useRef<HTMLAudioElement>(null)
   const MAX = 20
-
-  const [seconds, setSeconds] = useState();
-  const duration:number = soundRef.current?.duration;
-  const ct:number =  soundRef.current?.currentTime
-       const [currTime, setCurrTime] = useState({
-         min: "",
-         sec: ""
-       });
-
-       useEffect(() => {
-        const interval = setInterval(() => {
-          if (ct) {
-            setSeconds(ct);
-            const min = Math.floor(ct / 60);
-            const sec = Math.floor(ct % 60);
-            setCurrTime({
-              min,
-              sec
-            });
-          }
-        }, 1000);
-        return () => clearInterval(interval);
-      }, [ct]);
-      
-      //  useEffect(() => {
-      //   if (duration) {
-      //     const sec = duration / 1000;
-      //     const min = Math.floor(sec / 60);
-      //     const secRemain = Math.floor(sec % 60);
-      //     setTime({
-      //       min: min,
-      //       sec: secRemain
-      //     });
-      //   }
-      // }, [play]);
+  
+      const [currentTime, setCurrentTime] = useState(0);
+      const [duration, setDuration] = useState(0);
     
-      
-
-  //    const handleProgress = (e: React.ChangeEvent<HTMLInputElement>): void => {
-      
-  //      const {value} =  e.target;
-  //      const currentTime = value;
-  //      soundRef.current!.currentTime = currentTime;
-       
-  //  }
+      useEffect(() => {
+        if (soundRef.current) {
+          soundRef.current.addEventListener('timeupdate', handleTimeUpdate);
+          soundRef.current.addEventListener('loadedmetadata', handleLoadedMetadata);
+          soundRef.current.addEventListener('ended', handleAudioEnded);
+        }
+    
+        return () => {
+          if (soundRef.current) {
+            soundRef.current.removeEventListener('timeupdate', handleTimeUpdate);
+            soundRef.current.removeEventListener('loadedmetadata', handleLoadedMetadata);
+            soundRef.current.removeEventListener('ended', handleAudioEnded);
+          }
+        };
+      }, []);
+    
+      const handleTimeUpdate = () => {
+        if (soundRef.current) {
+          setCurrentTime(soundRef.current.currentTime);
+        }
+      };
+    
+      const handleLoadedMetadata = () => {
+        if (soundRef.current) {
+          setDuration(soundRef.current.duration);
+        }
+      };
+    
+      const handleAudioEnded = () => {
+        // Handle the audio ending, e.g., play the next track
+      };
+    
+      const handleSeek = (event: React.ChangeEvent<HTMLInputElement>) => {
+        const newTime = parseFloat(event.target.value);
+        setCurrentTime(newTime);
+        if (soundRef.current) {
+          soundRef.current.currentTime = newTime;
+        }
+      };
+    
+      const formatTime = (time: number) => {
+        const minutes = Math.floor(time / 60);
+        const seconds = Math.floor(time % 60);
+        return `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+      };
+    
         
      const  handleVolume = (e: React.ChangeEvent<HTMLInputElement>): void =>{
         const {value} =  e.target;
@@ -364,23 +369,23 @@ const sound:PlayerDescription = {
             <div>
                 <Time >
                     <p>
-                         {currTime.min}:{currTime.sec}
+                    {`${formatTime(currentTime)}`} 
                     </p>
                      <p>
-                     {Math.floor(sound.time / 60) + ':' + sound.time % 60}
+                     {`${formatTime(duration)}`}
                     </p>
+                    
                 </Time>
              <InputSliderProgress>  
-        <input
+             <input
         type="range"
-        min="0"
-        max={ct / 1000}
-        default="0"
-        value={ct}
-        onChange={(e) => {
-          handleProgress(e);
-        }}
-        />
+        min={0}
+        max={duration}
+        value={currentTime}
+        onChange={handleSeek}
+        step={0.1}
+      />
+      
           </InputSliderProgress> 
         </div>
         </FlexBox>
