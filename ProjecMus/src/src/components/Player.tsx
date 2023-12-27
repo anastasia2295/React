@@ -163,7 +163,7 @@ const sound:PlayerDescription = {
         time: 210,
         artist: 'Glass Animals'
 }
- const  Player1: React.FC<PlayerProps> = ()  => {
+ const  PlayerModule: React.FC<PlayerProps> = ()  => {
   const [play, setPlay] = useState(false)
   const soundRef: React.RefObject<HTMLAudioElement> = useRef<HTMLAudioElement>(null)
   const MAX = 100
@@ -313,4 +313,4 @@ const sound:PlayerDescription = {
  )
  }
 
- export default Player1
+ export default PlayerModule
