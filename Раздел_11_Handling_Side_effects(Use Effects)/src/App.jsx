@@ -66,13 +66,12 @@ function App() {
 
   return (
     <>
-      <Modal open={modalIsOpen}>
-        <DeleteConfirmation
-          onCancel={handleStopRemovePlace}
-          onConfirm={handleRemovePlace}
-        />
-      </Modal>
-
+     <Modal open={modalIsOpen} onClose={handleStopRemovePlace}>
+  <DeleteConfirmation
+    onCancel={handleStopRemovePlace}
+    onConfirm={handleRemovePlace}
+  />
+</Modal>
       <header>
         <img src={logoImg} alt="Stylized globe" />
         <h1>PlacePicker</h1>
