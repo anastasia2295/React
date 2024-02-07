@@ -1,42 +1,44 @@
-import './App.css'
-import {useForm, SubmitHandler, SubmitErrorHandler} from "react-hook-form"
 
-interface MyForm {
-  name: string;
-  age: number;
-}
+import {SubmitHandler, useForm} from "react-hook-form"
+import { IShippingFiled } from "./app.interface";
+import { useEffect } from "react";
 
 function App() {
-  const{register, handleSubmit, formState: {errors}, clearErrors, reset, setValue} = useForm<MyForm>({
-    defaultValues: {
-      age:18
-    }
+  const {register, handleSubmit, formState: {errors}, reset, watch} = useForm<IShippingFiled>({
+    mode: "onChange" //проверка ошибок при изменении поля
   })
-
-  const submit: SubmitHandler<MyForm> = data => {
-    console.log(data)
+  const onSubmit: SubmitHandler<IShippingFiled> = (data) =>{
+    alert(`your name ${data.name}`)
+    reset()
   }
 
-  const error: SubmitErrorHandler<MyForm> = data => {
-    console.log(data)
-  }
-  
+  useEffect(() => {
+    const subsription = watch((value, {name, type}) => console.log(value, name, type))
+    return () => subsription.unsubscribe()
+  }, [watch])
+
   return (
-    <>
-    <form onSubmit={handleSubmit(submit, error)}>
-      <input type='text' {...register("name", {required: true})} aria-invalid={errors.name ?
-      true : false}/>
-      <input type='number' {...register("age")}/>
-      <button>Отправить</button>
-      <button type='button' onClick={()=>reset({
-        age: 0,
-        name: ""
-      })}>Очистить форму</button>
-      <button type='button' onClick={()=>clearErrors()}>Очистить ошибки</button>
-      <button type='button' onClick={()=>setValue("name", "Вася")}>Установить имя</button>
-    </form>
-    </>
-  )
+    <div >
+      <form onSubmit={handleSubmit(onSubmit)}>
+        <input 
+        {...register("name", {
+          required: "Name is require field", //сообщение об ошибке
+        })
+      } type="text" placeholder="name"/>
+       {errors.name && <div style={{color: "red"}}>{errors.name.message}</div>} 
+      <input 
+        {...register("email", {
+          required: "Email is require field",
+          pattern: {
+            value: /^(?:[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&amp;'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-z0-9-]*[a-z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])$/ ,
+            message: "Please enter valid email"
+        }})
+      } type="text" placeholder="email"/>
+      {errors.email && <div style={{color: "red"}}>{errors.email.message}</div>}
+        <button>send</button>
+      </form>
+    </div>
+  );
 }
 
-export default App
+export default App;
