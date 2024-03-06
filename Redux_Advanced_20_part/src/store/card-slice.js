@@ -6,12 +6,18 @@ const cartSlice = createSlice({
     initialState: {
         items: [],
         totalQuantity: 0,
+        changed: false,
     },
     reducers: {
+        replaceCart(state, action) {
+            state.totalQuantity = action.payload.totalQuantity
+            state.items = action.payload.items
+        },
         addItemToCart(state, action) {
             const newItem = action.payload
             const existingItem = state.items.find(item => item.id === newItem.id)
             state.totalQuantity++
+            state.changed = true
             if(!existingItem){
                 state.items.push({
                     id: newItem.id, 
@@ -39,44 +45,7 @@ const cartSlice = createSlice({
     }
  })
 
-const sendCartData = (cart) => {
-    return async (dispatch) => {
-        dispatch(uiAction.showNotification({
-            status: "pending",
-            title: "Sending...",
-            message: "Sending cart data"
-          })
-        )
-        const sendRequest = async () =>{
-          const response = await fetch(
-            "https://react-http-6b4a6.firebaseio.com/cart.json", 
-            {
-          method: "PUT",
-          body: JSON.stringify(cart)
-        })
-        if(!response.ok) {
-          throw new Error("Sending cart data failed")
-        }  
-        }
-        try{
-            await sendRequest()
-            dispatch(uiAction.showNotification({
-            status: "success",
-            title: "Success",
-            message: "Sent cart data successfully"
-          })
-          )
-        } catch (error){
-            dispatch(uiAction.showNotification({
-                status: "Error",
-                title: "Error...",
-                message: "Sending cart data failed"  
-              })
-              )
-        }
-        
-    }
-}
+
 
  export default cartSlice
  export const cartActions = cartSlice.actions
