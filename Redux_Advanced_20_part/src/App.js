@@ -3,7 +3,7 @@ import Cart from './components/Cart/Cart';
 import Layout from './components/Layout/Layout';
 import Products from './components/Shop/Products';
 import { Fragment, useEffect } from 'react';
-import { uiAction } from './store/ul-slice';
+import sendCartData from './store/ul-slice';
 import Notification from "./components/UI/Notification"
 
 let isInitial = true
@@ -15,42 +15,11 @@ function App() {
   const notification = useSelector(state => state.ui.notification)
 
   useEffect(() => {
-
-    const sendCartData = async () =>  {
-      dispatch(uiAction.showNotification({
-        status: "pending",
-        title: "Sending...",
-        message: "Sending cart data"
-      }))
-      const response = await fetch(
-        "https://react-http-6b4a6.firebaseio.com/cart.json", 
-        {
-      method: "PUT",
-      body: JSON.stringify(cart)
-    })
-    if(!response.ok) {
-      throw new Error("Sending cart data failed")
-    }
-    const responseData = await response.json()
-    dispatch(uiAction.showNotification({
-      status: "success",
-      title: "Success",
-      message: "Sent cart data successfully"
-    })
-    )
-    }
     if(isInitial) {
-      isInitial = false
+      isInitial = true
       return
     }
-    sendCartData().catch(error =>{
-      dispatch(uiAction.showNotification({
-        status: "Error",
-        title: "Error...",
-        message: "Sending cart data failed"  
-      })
-      )
-    })
+    dispatch(sendCartData(cart))
   }, [cart, dispatch])
   return (
     <Fragment>
