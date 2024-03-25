@@ -4,6 +4,7 @@ import todo from "./store/todo";
 const Todo = observer(()=>{
     return(
         <div>
+            <button onClick={() => todo.fetchTodo()}> fetch todo</button>
             {todo.todos.map(t =>
                 <div key={t.id}>
                     <input type="checkbox" checked={t.completed} onChange={() => todo.completeTodo(t.id)}/>

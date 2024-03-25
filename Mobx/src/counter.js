@@ -4,7 +4,7 @@ import counter from "./store/counter"
 const  Counter = observer(() => {
     return (
         <div>
-            {"Count = " + counter.count}
+            {counter.total}
             <button onClick={counter.increment()}>+</button>
             <button onClick={counter.decrement()}>-</button>
         </div>
